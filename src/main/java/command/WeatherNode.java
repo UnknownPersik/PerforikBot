@@ -16,7 +16,7 @@ public class WeatherNode implements ICommand {
         try{
             URL link = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + text
                     + "&units=metric&appid=" + getToken());
-            return changeStr(parser.parseThisShit(link));
+            return makeStr(parser.parser(link));
         } catch (IOException e){
             e.printStackTrace();
             return null;
@@ -32,7 +32,7 @@ public class WeatherNode implements ICommand {
         return System.getenv("WEATHER_TOKEN");
     }
 
-    private static String changeStr(String[] result){
+    private static String makeStr(String[] result){
         return "Осадки: " + result[0] + "\n" +
                 "Скорость ветра: " + result[1] + "\n" +
                 "Температура: " + result[2] + "\n" +

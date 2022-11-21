@@ -9,7 +9,7 @@ import java.net.URL;
 public class JSONParser{
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String[] parseThisShit(URL link1) throws IOException{
+    public String[] parser(URL link1) throws IOException{
         byte[]  result = link1.openStream().readAllBytes();
         JsonNode jsonNode = objectMapper.readTree(result);
         JsonNode weatherData = jsonNode.path("weather");
