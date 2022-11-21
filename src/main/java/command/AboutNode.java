@@ -1,11 +1,10 @@
 package command;
 
 public class AboutNode implements ICommand {
-    private final String infoAboutCommand;
+    private static final String infoAboutCommand = "Эта команда, рассказывает о боте и его создателях.";
+    private static final String infoAboutBot = "Бот, показывающий текущую погоду. \n@Unknown_Persik";
 
-    public AboutNode(){
-        infoAboutCommand = "Эта команда, рассказывает о боте и его создателях.";
-    }
+    public AboutNode(){}
 
     @Override
     public String getInfo() {
@@ -14,6 +13,6 @@ public class AboutNode implements ICommand {
 
     @Override
     public String doCommand(String text) {
-        return "Бот, показывающий текущую погоду. \n@Unknown_Persik";
+        return infoAboutBot;
     }
 }
