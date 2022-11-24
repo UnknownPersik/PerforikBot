@@ -16,20 +16,20 @@ public class TelegramBot extends TelegramLongPollingBot {
   private final String userName;
   private final String token;
   private final HandlerNode handler;
-  public TelegramBot(String userName, String token) {
+  public TelegramBot(final String userName, final String token) {
     this.userName = userName;
     this.token = token;
     handler = new HandlerNode();
   }
 
-  private void sendMsg(String chatId, String text){
+  private void sendMsg(String chatId, String text) {
     SendMessage sendMessage = new SendMessage();
     sendMessage.enableMarkdown(true);
     sendMessage.setChatId(chatId);
     sendMessage.setText(text);
-    try{
+    try {
       execute(sendMessage);
-    } catch (TelegramApiException e){
+    } catch (TelegramApiException e) {
       e.printStackTrace();
     }
   }
@@ -40,15 +40,15 @@ public class TelegramBot extends TelegramLongPollingBot {
     Message temp = update.getMessage();
     String chatID = temp.getChatId().toString();
     String text = temp.getText();
-    if (!temp.hasEntities()){
+    if (!temp.hasEntities()) {
       sendMsg(chatID, text);
     }
-    else{
+    else {
       handleMessage(chatID, text);
     }
   }
 
-  public void handleMessage(String chatID, String text){
+  public void handleMessage(String chatID, String text) {
     String msg = handler.checkCommand(text);
     if (msg != null) {
       try {

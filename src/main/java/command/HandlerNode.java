@@ -8,9 +8,10 @@ public class HandlerNode {
     public HandlerNode(){
          commands = new HashMap<>();
          commands.put("about", new AboutNode());
-         commands.put("help", new HelpNode(commands));
          commands.put("weather", new WeatherNode());
          commands.put("echo", new EchoNode());
+         commands.put("start", new StartNode());
+         commands.put("help", new HelpNode(commands));
     }
 
     public String checkCommand(String query){
