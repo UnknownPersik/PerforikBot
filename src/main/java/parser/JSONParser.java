@@ -4,14 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.net.URL;
 
-public class JSONParser{
+public class JSONParser {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String[] parser(URL link1) throws IOException{
-        byte[]  result = link1.openStream().readAllBytes();
-        JsonNode jsonNode = objectMapper.readTree(result);
+    public String[] parser(byte[] info) throws IOException {
+        JsonNode jsonNode = objectMapper.readTree(info);
         JsonNode weatherData = jsonNode.path("weather");
         String weather = weatherData.elements().next().path("main").asText();
         String wind = jsonNode.path("wind").path("speed").asText();
