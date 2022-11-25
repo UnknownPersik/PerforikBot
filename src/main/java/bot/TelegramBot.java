@@ -1,68 +1,56 @@
 package bot;
 
-import lombok.SneakyThrows;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import command.HandlerNode;
-
+import common.WorkWithMessage;
 
 public class TelegramBot extends TelegramLongPollingBot {
   private final String userName;
   private final String token;
-  private final HandlerNode handler;
-  public TelegramBot(final String userName, final String token) {
+  private final WorkWithMessage workWithMessage;
+  private final Keyboard keyboard;
+
+  public TelegramBot(String userName, String token) {
     this.userName = userName;
     this.token = token;
-    handler = new HandlerNode();
+    workWithMessage = new WorkWithMessage();
+    keyboard = new Keyboard();
   }
 
-  private void sendMsg(String chatId, String text) {
-    SendMessage sendMessage = new SendMessage();
-    sendMessage.enableMarkdown(true);
+  @Override
+  public void onUpdateReceived(Update update) {
+    Message msgTelegram;
+    String inputText;
+    Long chatID;
+
+    if (update.hasCallbackQuery()) {
+      msgTelegram = update.getCallbackQuery().getMessage();
+      inputText = update.getCallbackQuery().getData();
+    }
+    else {
+      msgTelegram = update.getMessage();
+      inputText = update.getMessage().getText();
+    }
+
+    chatID = msgTelegram.getChatId();
+    SendMessage answer = workWithMessage.handleMessage(inputText);
+    sendMsg(chatID, answer);
+  }
+
+  private synchronized void sendMsg(long chatId, SendMessage sendMessage) {
     sendMessage.setChatId(chatId);
-    sendMessage.setText(text);
+    keyboard.setButtons(sendMessage);
     try {
       execute(sendMessage);
     } catch (TelegramApiException e) {
       e.printStackTrace();
-    }
-  }
-
-  @Override
-  @SneakyThrows
-  public void onUpdateReceived(Update update) {
-    Message temp = update.getMessage();
-    String chatID = temp.getChatId().toString();
-    String text = temp.getText();
-    if (!temp.hasEntities()) {
-      sendMsg(chatID, text);
-    }
-    else {
-      handleMessage(chatID, text);
-    }
-  }
-
-  public void handleMessage(String chatID, String text) {
-    String msg = handler.checkCommand(text);
-    if (msg != null) {
-      try {
-        execute(SendMessage.builder().text(msg).chatId(chatID).build());
-      } catch (TelegramApiException e) {
-        e.printStackTrace();
-      }
-    }
-    else{
-      try {
-        execute(SendMessage.builder().text("Такой команды нет попробуйте снова").chatId(chatID).build());
-        } catch (TelegramApiException e){
-        e.printStackTrace();
-      }
     }
   }
 

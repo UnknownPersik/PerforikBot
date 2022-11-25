@@ -11,7 +11,7 @@ public class EchoNode implements ICommand {
 
     public String doCommand(String text){
         if (text == null){
-            return "Введите что-нибудь после /echo для вывода на экран";
+            return "Введите что-нибудь, чтобы бот вывел то же самое)";
         }
         return text;
     }

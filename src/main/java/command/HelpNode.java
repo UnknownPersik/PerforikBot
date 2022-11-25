@@ -9,12 +9,13 @@ public class HelpNode implements ICommand {
 
     public HelpNode(HashMap<String, ICommand> map){
         commandHashMap = map;
-        StringBuilder temp = new StringBuilder();
-        temp.append("Бот имеет следующие команды \n");
+        StringBuilder strTemp = new StringBuilder();
+        strTemp.append("Бот имеет следующие команды \n");
         for (String key : commandHashMap.keySet()){
-            temp.append("/").append(key).append("\n"); // А почему нельзя было написать temp.append("/" + key + "\n")
+            strTemp.append("/").append(key).append("\n"); // А почему нельзя было написать strTemp.append("/" + key + "\n")
         }
-        infoAboutCommands = temp.toString();
+        infoAboutCommands = strTemp.toString();
+
     }
 
   @Override
@@ -27,7 +28,6 @@ public class HelpNode implements ICommand {
     }
     return infoAboutCommands;
 	}
-
 
     @Override
     public String getInfo() {
