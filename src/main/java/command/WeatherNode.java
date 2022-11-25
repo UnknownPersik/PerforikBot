@@ -34,7 +34,7 @@ public class WeatherNode implements ICommand {
                 return "Вы не правильно ввели название города :)";
             }
         }
-        return "Напишите /help weather, чтобы посмотреть как работает команда!";
+        return "Введите название города после команды, чтобы узнать текущую погоду.";
     }
 
     @Override
