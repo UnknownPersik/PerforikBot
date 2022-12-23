@@ -11,12 +11,14 @@ public class HandlerNode {
          commands.put("weather", new WeatherNode());
          commands.put("echo", new EchoNode());
          commands.put("start", new StartNode());
+         commands.put("favourite_city", new FavouriteCityNode());
          commands.put("help", new HelpNode(commands));
     }
 
     public String checkCommand(String query){
         String[] line = query.substring(1).split(" ", 2);
         String command = line[0];
+
         String parameter = null;
         if (line.length > 1) {
             parameter = line[1];
