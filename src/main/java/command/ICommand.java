@@ -1,6 +1,8 @@
 package command;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 public interface ICommand {
-    String doCommand(String string);
+    SendMessage doCommand(String string);
     String getInfo();
 }

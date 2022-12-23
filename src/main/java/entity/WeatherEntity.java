@@ -1,4 +1,4 @@
-package parser;
+package entity;
 
 import javax.validation.constraints.NotNull;
 

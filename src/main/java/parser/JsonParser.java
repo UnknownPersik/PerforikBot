@@ -2,6 +2,7 @@ package parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import entity.WeatherEntity;
 
 import java.io.IOException;
 

@@ -18,7 +18,7 @@ class HandlerNodeTest {
 	void checkCommandEchoWithEmptyMessage() {
 		String query = "/echo";
 		String result = handlerNode.checkCommand(query);
-    	String equalResult = "Введите что-нибудь после /echo для вывода на экран";
+    	String equalResult = "Введите что-нибудь, чтобы бот вывел то же самое)";
 		Assertions.assertEquals(result, equalResult);
 	}
 
@@ -33,7 +33,7 @@ class HandlerNodeTest {
 	void checkCommandWeatherWithWrongCity() {
 		String query = "/weather Екб";
 		String result = handlerNode.checkCommand(query);
-		String equalResult = "Вы не правильно ввели название города :)";
+		String equalResult = "Вы не правильно ввели название города \uD83D\uDE02";
 		Assertions.assertEquals(result, equalResult);
 	}
 
@@ -53,6 +53,7 @@ class HandlerNodeTest {
 				Бот имеет следующие команды\s
 				/about
 				/weather
+				/start
 				/echo
 				""";
 		Assertions.assertEquals(result, equalResult);
@@ -79,11 +80,13 @@ class HandlerNodeTest {
 		String query = "/help weather";
 		String result = handlerNode.checkCommand(query);
 		String equalResult = """
-            Это команда показывает текущую погоду в выбранном вами городе\s
-            Тип осадков\s
-            Температуру (°C)\s
-            Скорость ветра (м/с)\s
-            Влажность (%)""";
+            Это команда показывает текущую погоду в выбранном вами городе
+            Тип осадков
+            Температуру (°C)
+            Скорость ветра (м/с)
+            Влажность (%)
+            Чтобы получить информацию о погоде введите
+            /weather <Название города>""";
 		Assertions.assertEquals(result, equalResult);
 	}
 

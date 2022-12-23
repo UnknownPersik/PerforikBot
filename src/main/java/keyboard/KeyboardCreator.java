@@ -5,35 +5,52 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class KeyboardCreator {
-    public void createButtonForHelpCommand(SendMessage message) {
+    public void setSimpleButtons(SendMessage message) {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        message.setReplyMarkup(replyKeyboardMarkup);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
+
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        KeyboardRow firstRow = new KeyboardRow();
+
+        firstRow.add(new KeyboardButton("/help"));
+        firstRow.add(new KeyboardButton("/weather"));
+
+        keyboard.add(firstRow);
+
+        replyKeyboardMarkup.setKeyboard(keyboard);
+    }
+
+    public void setButtonForHelp(SendMessage message) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        message.setReplyMarkup(inlineKeyboardMarkup);
 
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> firstRow = new ArrayList<>();
         List<InlineKeyboardButton> secondRow = new ArrayList<>();
 
         InlineKeyboardButton about = new InlineKeyboardButton();
-        about.setText("about");
-        about.setCallbackData("about");
-
         InlineKeyboardButton echo = new InlineKeyboardButton();
-        about.setText("echo");
-        about.setCallbackData("echo");
-
         InlineKeyboardButton weather = new InlineKeyboardButton();
-        about.setText("weather");
-        about.setCallbackData("weather");
-
         InlineKeyboardButton help = new InlineKeyboardButton();
-        about.setText("help");
-        about.setCallbackData("help");
+
+        about.setText("about");
+        about.setCallbackData("/help about");
+        echo.setText("echo");
+        echo.setCallbackData("/help echo");
+        weather.setText("weather");
+        weather.setCallbackData("/help weather");
+        help.setText("help");
+        help.setCallbackData("/help help");
 
         firstRow.add(about);
         firstRow.add(echo);
@@ -44,6 +61,5 @@ public class KeyboardCreator {
         keyboard.add(secondRow);
 
         inlineKeyboardMarkup.setKeyboard(keyboard);
-        message.setReplyMarkup(inlineKeyboardMarkup);
     }
 }

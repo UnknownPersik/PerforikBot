@@ -2,6 +2,7 @@ package bot;
 
 import database.UserBase;
 import entity.User;
+import keyboard.KeyboardCreator;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,13 +19,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final String userName;
     private final String token;
     private final WorkWithMessage workWithMessage;
-    private final Keyboard keyboard;
+    private final KeyboardCreator keyboardCreator;
 
     public TelegramBot(String userName, String token) {
         this.userName = userName;
         this.token = token;
         workWithMessage = new WorkWithMessage();
-        keyboard = new Keyboard();
+        keyboardCreator = new KeyboardCreator();
     }
 
     @Override
@@ -48,16 +49,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMsg(chatID, answer);
     }
 
-    private void registerUser(Long id) {
+    private User registerUser(Long id) {
         User user = new UserBase().findByTelegramId(id);
+        User newUser = new User();
         if (user == null) {
-            User newUser = new User();
             newUser.setId(id);
-            user = new UserBase().save(newUser);
         }
+        return new UserBase().save(newUser);
     }
 
-    public synchronized void sendMsg(long chatId, SendMessage sendMessage) {
+    public synchronized void sendMsg(Long chatId, SendMessage sendMessage) {
         sendMessage.setChatId(chatId);
         try {
             execute(sendMessage);
