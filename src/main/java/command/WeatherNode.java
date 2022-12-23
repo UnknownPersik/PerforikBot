@@ -1,5 +1,6 @@
 package command;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import parser.JsonParser;
 import entity.WeatherEntity;
 
@@ -15,13 +16,14 @@ public class WeatherNode implements ICommand {
             Температуру (°C)
             Скорость ветра (м/с)
             Влажность (%)
-            Чтобы получить информацию о погоде введите
-            /weather <Название города>""";
+            Чтобы получить информацию о погоде выберите один из любимых городов
+            Либо напишите /weather <Название города>""";
 
     public WeatherNode() {}
 
     @Override
-    public String doCommand(String text) {
+    public SendMessage doCommand(String text) {
+        SendMessage msg = new SendMessage();
         if (text != null) {
             JsonParser parser = new JsonParser();
             try {
@@ -29,13 +31,16 @@ public class WeatherNode implements ICommand {
                         + "&units=metric&appid=" + getToken());
                 byte[] infoAboutWeather = link.openStream().readAllBytes();
                 WeatherEntity weatherEntity = parser.parser(infoAboutWeather);
-                return makeStr(weatherEntity);
+                msg.setText(makeStr(weatherEntity));
             } catch (IOException e) {
                 e.printStackTrace();
-                return "Вы не правильно ввели название города \uD83D\uDE02";
+                msg.setText("Вы не правильно ввели название города \uD83D\uDE02");
+                return msg;
             }
         }
-        return "Введите название города после команды, чтобы узнать текущую погоду.";
+        msg.setText("Выберите один из трех лююбимых городов\n" +
+                "Либо напишите /weather <Название города>.");
+        return msg;
     }
 
     @Override

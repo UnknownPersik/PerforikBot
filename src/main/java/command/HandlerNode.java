@@ -1,5 +1,7 @@
 package command;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 import java.util.HashMap;
 
 public class HandlerNode {
@@ -15,11 +17,11 @@ public class HandlerNode {
          commands.put("help", new HelpNode(commands));
     }
 
-    public String checkCommand(String query){
+    public SendMessage checkCommand(String query){
         String[] line = query.substring(1).split(" ", 2);
         String command = line[0];
-
         String parameter = null;
+
         if (line.length > 1) {
             parameter = line[1];
         }

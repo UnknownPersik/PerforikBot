@@ -1,5 +1,7 @@
 package command;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 public class EchoNode implements ICommand {
     public static final String infoAboutCommand = "Выводит то, что вы введете после echo";
 
@@ -9,10 +11,13 @@ public class EchoNode implements ICommand {
         return infoAboutCommand;
     }
 
-    public String doCommand(String text){
+    public SendMessage doCommand(String text){
+        SendMessage msg = new SendMessage();
         if (text == null){
-            return "Введите что-нибудь, чтобы бот вывел то же самое)";
+            msg.setText("Введите что-нибудь, чтобы бот вывел то же самое)");
+            return msg;
         }
-        return text;
+        msg.setText(text);
+        return msg;
     }
 }
