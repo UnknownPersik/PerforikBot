@@ -1,14 +1,14 @@
 package command;
 
-import parser.JSONParser;
+import parser.JsonParser;
+import entity.WeatherEntity;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class WeatherNode implements ICommand {
-    private static final String[] pattern = {"Осадки:\n", "Скорость ветра:м/c\n",
-            "Температура:°C\n", "Ощущается:°C\n",
-            "Влажность:%\n", "Город:\n"};
+
     public static final String infoAboutCommand = """
             Это команда показывает текущую погоду в выбранном вами городе
             Тип осадков
@@ -18,20 +18,21 @@ public class WeatherNode implements ICommand {
             Чтобы получить информацию о погоде введите
             /weather <Название города>""";
 
-    public WeatherNode(){}
+    public WeatherNode() {}
 
     @Override
     public String doCommand(String text) {
-        if (text != null){
-            JSONParser parser = new JSONParser();
-            try{
-                URL link = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + text.split(" ")[0]
+        if (text != null) {
+            JsonParser parser = new JsonParser();
+            try {
+                URL link = new URL("https://api.openweathermap.org/data/2.5/weather?q=" + text.split(" ")[0]
                         + "&units=metric&appid=" + getToken());
                 byte[] infoAboutWeather = link.openStream().readAllBytes();
-                return makeStr(parser.parser(infoAboutWeather));
-            } catch (IOException e){
+                WeatherEntity weatherEntity = parser.parser(infoAboutWeather);
+                return makeStr(weatherEntity);
+            } catch (IOException e) {
                 e.printStackTrace();
-                return "Вы не правильно ввели название города :)";
+                return "Вы не правильно ввели название города \uD83D\uDE02";
             }
         }
         return "Введите название города после команды, чтобы узнать текущую погоду.";
@@ -42,18 +43,27 @@ public class WeatherNode implements ICommand {
         return infoAboutCommand;
     }
 
-    private static String getToken(){
+    private static String getToken() {
         return System.getenv("WEATHER_TOKEN");
     }
 
-    private static String makeStr(String[] result){
-        StringBuilder resultString = new StringBuilder();
-        for (int i = 0; i < result.length; i++){
-            String firstHalf = pattern[i].split(":")[0];
-            String secondHalf = pattern[i].split(":")[1];
-            result[i] = firstHalf + ": " + result[i] + " " + secondHalf;
-            resultString.append(result[i]);
+    private String makeStr(WeatherEntity weather) {
+        return "Осадки: " + weather.getWeather() + "\n" +
+                "Скорость ветра: " + weather.getWind() + " м/с\n" +
+                "Температура: " + weather.getTemp() + " °C\n" +
+                "Ощущается: " + weather.getFeelTemp() + " °C\n" +
+                "Влажность: " + weather.getHumidity() + " %\n" +
+                "Город: " + weather.getCity();
+    }
+
+    public boolean correctCity(String city) throws MalformedURLException {
+        URL testLink = new URL("https://api.openweathermap.org/data/2.5/weather?q=" + city.split(" ")[0]
+                + "&units=metric&appid=" + getToken());
+        try {
+            testLink.openStream();
+        } catch (IOException e) {
+            return false;
         }
-        return resultString.toString();
+        return true;
     }
 }
