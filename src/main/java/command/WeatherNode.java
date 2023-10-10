@@ -1,15 +1,21 @@
 package command;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import entity.Cities;
+import keyboard.KeyboardCreator;
 import parser.JsonParser;
 import entity.WeatherEntity;
+import database.UserBase;
+
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WeatherNode implements ICommand {
 
+    private final KeyboardCreator keyboardCreator = new KeyboardCreator();
     public static final String infoAboutCommand = """
             Это команда показывает текущую погоду в выбранном вами городе
             Тип осадков
@@ -19,10 +25,11 @@ public class WeatherNode implements ICommand {
             Чтобы получить информацию о погоде выберите один из любимых городов
             Либо напишите /weather <Название города>""";
 
-    public WeatherNode() {}
+    public WeatherNode() {
+    }
 
     @Override
-    public SendMessage doCommand(String text) {
+    public SendMessage doCommand(String text, Long id) {
         SendMessage msg = new SendMessage();
         if (text != null) {
             JsonParser parser = new JsonParser();
@@ -35,11 +42,20 @@ public class WeatherNode implements ICommand {
             } catch (IOException e) {
                 e.printStackTrace();
                 msg.setText("Вы не правильно ввели название города \uD83D\uDE02");
-                return msg;
             }
+        } else {
+            List<Cities> columnsFromCitiesBase = new ArrayList<>(new UserBase().findCities(id).getCities());
+            StringBuilder stringOfCities = new StringBuilder();
+            for (var column : columnsFromCitiesBase) {
+                stringOfCities.append(column.getCities()).append(" ");
+            }
+            var result = stringOfCities.toString();
+            msg.setText("""
+                    Выберите один из трех любимых городов
+                    Либо напишите /weather <Название города>.
+                    """);
+            keyboardCreator.setSimpleButtonForWeather(msg, result);
         }
-        msg.setText("Выберите один из трех лююбимых городов\n" +
-                "Либо напишите /weather <Название города>.");
         return msg;
     }
 
@@ -61,10 +77,10 @@ public class WeatherNode implements ICommand {
                 "Город: " + weather.getCity();
     }
 
-    public boolean correctCity(String city) throws MalformedURLException {
-        URL testLink = new URL("https://api.openweathermap.org/data/2.5/weather?q=" + city.split(" ")[0]
-                + "&units=metric&appid=" + getToken());
+    public boolean correctCity(String city) {
         try {
+            URL testLink = new URL("https://api.openweathermap.org/data/2.5/weather?q=" + city.split(" ")[0]
+                    + "&units=metric&appid=" + getToken());
             testLink.openStream();
         } catch (IOException e) {
             return false;

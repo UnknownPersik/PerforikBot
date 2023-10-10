@@ -3,7 +3,9 @@ package entity;
 import lombok.Getter;
 import lombok.Setter;
 
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Setter
@@ -14,7 +16,6 @@ public class User {
     @Column(name = "telegram_id", nullable = false)
     private Long id;
 
-    @Transient
-    @Column(name = "favourite_cities")
-    private String[] cities;
+    @OneToMany(mappedBy = "user")
+    private List<Cities> cities;
 }
