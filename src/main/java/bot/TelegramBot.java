@@ -2,7 +2,6 @@ package bot;
 
 import database.UserBase;
 import entity.User;
-import keyboard.KeyboardCreator;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,19 +12,15 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import common.WorkWithMessage;
 
-import java.util.ArrayList;
-
 public class TelegramBot extends TelegramLongPollingBot {
     private final String userName;
     private final String token;
     private final WorkWithMessage workWithMessage;
-    private final KeyboardCreator keyboardCreator;
 
     public TelegramBot(String userName, String token) {
         this.userName = userName;
         this.token = token;
         workWithMessage = new WorkWithMessage();
-        keyboardCreator = new KeyboardCreator();
     }
 
     @Override
@@ -33,9 +28,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         Message msgTelegram;
         String inputText;
         Long chatID;
-//        Long telegramID = update.getMessage().getChat().getId();
-//        registerUser(telegramID);
-
+        Long telegramID;
         if (update.hasCallbackQuery()) {
             msgTelegram = update.getCallbackQuery().getMessage();
             inputText = update.getCallbackQuery().getData();
@@ -43,19 +36,20 @@ public class TelegramBot extends TelegramLongPollingBot {
             msgTelegram = update.getMessage();
             inputText = update.getMessage().getText();
         }
-
+        telegramID = msgTelegram.getChat().getId();
+        registerUser(telegramID);
         chatID = msgTelegram.getChatId();
-        SendMessage answer = workWithMessage.handleMessage(inputText);
+        SendMessage answer = workWithMessage.handleMessage(inputText, telegramID);
         sendMsg(chatID, answer);
     }
 
-    private User registerUser(Long id) {
+    private void registerUser(Long id) {
         User user = new UserBase().findByTelegramId(id);
         User newUser = new User();
         if (user == null) {
             newUser.setId(id);
         }
-        return new UserBase().save(newUser);
+        new UserBase().save(newUser);
     }
 
     public synchronized void sendMsg(Long chatId, SendMessage sendMessage) {

@@ -8,6 +8,7 @@ import java.io.IOException;
 
 public class JsonParser {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public WeatherEntity parser(byte[] info) throws IOException {
         JsonNode jsonNode = objectMapper.readTree(info);
         JsonNode weatherData = jsonNode.path("weather");

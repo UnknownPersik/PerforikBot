@@ -1,6 +1,7 @@
 package command;
 
 import java.util.HashMap;
+
 import keyboard.KeyboardCreator;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -10,6 +11,7 @@ public class HelpNode implements ICommand {
     public final String infoAboutCommands;
     public final String infoAboutCommand = "Показывает список команд, доступных в боте";
     private final HashMap<String, ICommand> commandHashMap;
+
     public HelpNode(HashMap<String, ICommand> map) {
         commandHashMap = map;
         StringBuilder strTemp = new StringBuilder();
@@ -22,14 +24,13 @@ public class HelpNode implements ICommand {
     }
 
     @Override
-    public SendMessage doCommand(String text) {
+    public SendMessage doCommand(String text, Long id) {
         SendMessage msg = new SendMessage();
         if (text != null) {
             if (commandHashMap.containsKey(text)) {
                 msg.setText(commandHashMap.get(text).getInfo());
                 return msg;
             }
-            return null;
         }
         msg.setText(infoAboutCommands);
         keyboardCreator.setButtonForHelp(msg);
